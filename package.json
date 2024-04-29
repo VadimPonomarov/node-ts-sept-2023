@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "rimraf dist && tsc-watch --onSuccess \"npm run watch:server\"",
+    "dev": "rimraf dist && kill-port 3001 && tsc-watch --onSuccess \"npm run watch:server\"",
     "watch:server": "nodemon --exec ts-node src/main.ts",
     "start": "node ./dist/main.js"
   },
@@ -36,8 +36,10 @@
     "typescript-eslint": "^7.7.1"
   },
   "dependencies": {
+    "@types/joi": "^17.2.3",
     "@types/mongoose": "^5.11.97",
     "express": "^4.19.2",
+    "joi": "^17.13.0",
     "mongoose": "^8.3.2",
     "morgan": "^1.10.0",
     "winston": "^3.13.0"

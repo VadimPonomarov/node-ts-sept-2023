@@ -1,9 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
-import { ApiError } from "../common/errors/api.error";
 import { IUser } from "../common/interfaces/user.interface";
 import { userService } from "../services/user.service";
-import { userValidator } from "../validations/user.validator";
 
 class UserController {
   public async getList(req: Request, res: Response, next: NextFunction) {
@@ -17,10 +15,6 @@ class UserController {
 
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const { error } = userValidator(req.body);
-      if (error) {
-        throw new ApiError(error.message, 403);
-      }
       const dto = req.body as Partial<IUser>;
       const newUser = await userService.create(dto);
       res.status(201).json(newUser);

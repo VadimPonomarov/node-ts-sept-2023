@@ -1,6 +1,7 @@
 import { ApiError } from "../common/errors/api.error";
 import { IUser } from "../common/interfaces/user.interface";
 import { userRepository } from "../repositories/user.repository";
+import { authService } from "./auth.service";
 
 class UserService {
   public async getList(): Promise<IUser[]> {
@@ -8,11 +9,20 @@ class UserService {
   }
 
   public async create(dto: Partial<IUser>): Promise<IUser> {
-    return await userRepository.create(dto);
+    const hashed = authService.getHashed(dto.password);
+    return await userRepository.create({ ...dto, password: hashed });
   }
 
   public async getById(userId: string): Promise<IUser> {
     const user = await userRepository.getById(userId);
+    if (!user) {
+      throw new ApiError("user not found", 404);
+    }
+    return user;
+  }
+
+  public async getByEmail(userEmail: string): Promise<IUser> {
+    const user = await userRepository.getById(userEmail);
     if (!user) {
       throw new ApiError("user not found", 404);
     }

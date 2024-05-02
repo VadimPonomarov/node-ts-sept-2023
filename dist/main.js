@@ -5,14 +5,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const morgan_1 = __importDefault(require("morgan"));
 const configs_1 = require("./common/configs");
-const morgan_middleware_1 = require("./middlewares/morgan.middleware");
+const morgan_2 = require("./common/configs/morgan");
+const auth_router_1 = require("./routes/auth.router");
 const user_router_1 = require("./routes/user.router");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
-app.use(morgan_middleware_1.morganMiddleware);
+app.use((0, morgan_1.default)("combined", morgan_2.morganOptions));
 app.use("/users", user_router_1.userRouter);
+app.use("/auth", auth_router_1.authRouter);
 app.use("*", (err, req, res, next) => {
     configs_1.Logger.error(err.stack);
     return res

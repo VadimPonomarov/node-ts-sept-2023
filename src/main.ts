@@ -1,16 +1,19 @@
 import express, { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
+import morgan from "morgan";
 
 import { config, Logger } from "./common/configs";
+import { morganOptions as options } from "./common/configs/morgan";
 import { ApiError } from "./common/errors/api.error";
-import { morganMiddleware } from "./middlewares/morgan.middleware";
+import { authRouter } from "./routes/auth.router";
 import { userRouter } from "./routes/user.router";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(morganMiddleware);
+app.use(morgan("combined", options));
 app.use("/users", userRouter);
+app.use("/auth", authRouter);
 
 app.use(
   "*",

@@ -2,3 +2,6 @@ node_modules
 dist
 .idea
 logs
+.env
+.gitignore
+node-ts-sept-2023.iml

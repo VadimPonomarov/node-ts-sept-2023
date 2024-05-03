@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "rimraf dist && kill-port 3001 && tsc-watch --onSuccess \"npm run watch:server\"",
+    "dev": "rimraf dist && kill-port 3000 && tsc-watch --onSuccess \"npm run watch:server\"",
     "watch:server": "nodemon --exec ts-node src/main.ts",
     "start": "node ./dist/main.js",
     "secret": "node -e \"console.log(require('crypto').randomBytes(48).toString('hex'))\""

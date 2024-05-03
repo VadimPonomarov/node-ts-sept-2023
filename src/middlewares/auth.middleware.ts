@@ -9,19 +9,16 @@ class AuthMiddleware {
   public async isAuth(req: Request, res: Response, next: NextFunction) {
     try {
       if (!req.headers.authorization) throw new ApiError("Not authorised", 401);
-      const [bearer, token] = req.headers.authorization
-        .valueOf()
-        .trim()
-        .split(/\s+/);
+      const [bearer, token] = req.headers.authorization.trim().split(/\s+/);
       if (bearer.toLowerCase() !== "bearer" || !token) {
         throw new ApiError(
-          "You are supposed to provide JWT as: Bearer + JWT",
+          "You are supposed to provide JWT as header 'authorization: Bearer ...JWT'",
           401,
         );
       }
       const isRegistered = await tokenRepository.getOne(token);
       if (!isRegistered) throw new ApiError("Token is not registered yet", 401);
-      const { type } = jwtService.isJwtValid(token) as IJwtPayload;
+      const { type }: Partial<IJwtPayload> = jwtService.isJwtValid(token);
       if (type !== "access") throw new ApiError("Wrong JWT type", 401);
       next();
     } catch (e) {

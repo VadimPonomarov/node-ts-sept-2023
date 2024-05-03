@@ -7,21 +7,12 @@ export interface IJwt {
   token: string;
 }
 
-export type JwtPairType = [
-  {
-    type: JwtTypes.ACCESS;
-    token: string;
-  },
-  {
-    type: JwtTypes.REFRESH;
-    token: string;
-  },
-];
+export type JwtPairType = IJwt[];
 
 export interface IJwtPayload {
-  _id: string;
-  type: JwtTypes;
-  role: RoleEnum;
+  _id?: string;
+  type?: JwtTypes;
+  role?: RoleEnum;
 }
 
 export interface IToken extends IJwt {

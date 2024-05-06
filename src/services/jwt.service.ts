@@ -5,7 +5,6 @@ import { Types } from "mongoose";
 import { config, Logger } from "../common/configs";
 import { jwtAccessConfig } from "../common/configs/jwt";
 import { JwtTypes } from "../common/constants";
-import { ApiError } from "../common/errors/api.error";
 import {
   IJwt,
   IJwtPayload,
@@ -36,20 +35,6 @@ export class JwtService {
         type: JwtTypes.REFRESH,
       });
       return [access, refresh];
-    } catch (e) {
-      Logger.error(e.stack);
-    }
-  }
-
-  public async refreshJwtPair(refreshToken: string): Promise<JwtPairType> {
-    try {
-      const payload = (await jwtService.isJwtValid(
-        refreshToken,
-      )) as IJwtPayload;
-      const isRegistered = await tokenRepository.getOne(refreshToken);
-      if (payload.type !== "refresh" || !isRegistered)
-        throw new ApiError("Wrong jwt", 401);
-      return await this.getJwtPair({ _id: payload._id, role: payload.role });
     } catch (e) {
       Logger.error(e.stack);
     }

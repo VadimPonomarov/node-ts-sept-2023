@@ -6,3 +6,7 @@ export const jwtAccessConfig: Partial<SignOptions> = {
 export const jwtRefreshConfig: Partial<SignOptions> = {
   expiresIn: "20d",
 };
+
+export const jwtConfirmConfig: Partial<SignOptions> = {
+  expiresIn: "48h",
+};

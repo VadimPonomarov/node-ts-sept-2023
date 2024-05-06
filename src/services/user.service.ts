@@ -1,7 +1,10 @@
+import { EmailTypeEnum, JwtTypes } from "../common/constants";
 import { ApiError } from "../common/errors/api.error";
 import { IUser } from "../common/interfaces/user.interface";
 import { userRepository } from "../repositories/user.repository";
 import { authService } from "./auth.service";
+import { jwtService } from "./jwt.service";
+import { sendGridService } from "./sendGrid.service";
 
 class UserService {
   public async getList(): Promise<IUser[]> {
@@ -10,7 +13,16 @@ class UserService {
 
   public async create(dto: Partial<IUser>): Promise<IUser> {
     const hashed = authService.getHashed(dto.password);
-    return await userRepository.create({ ...dto, password: hashed });
+    const user = await userRepository.create({ ...dto, password: hashed });
+    const { token } = await jwtService.createJwt(JwtTypes.CONFIRM, {
+      _id: user._id,
+      type: JwtTypes.CONFIRM,
+    });
+    await sendGridService.sendByType(user.email, EmailTypeEnum.CONFIRM_EMAIL, {
+      link:
+        "http://localhost:3000/auth/confirm?actionToken=" + token.toString(),
+    });
+    return user;
   }
 
   public async getById(userId: string): Promise<IUser> {

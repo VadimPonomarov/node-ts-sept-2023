@@ -1,10 +1,12 @@
+import { Logger } from "../common/configs";
 import { EmailTypeEnum, JwtTypes } from "../common/enums";
-import { ApiError } from "../common/errors/api.error";
-import { IUser } from "../common/interfaces/user.interface";
-import { userRepository } from "../repositories/user.repository";
+import { ApiError } from "../common/errors";
+import { IUser } from "../common/interfaces";
+import { userRepository } from "../repositories";
 import { authService } from "./auth.service";
 import { jwtService } from "./jwt.service";
 import { sendGridService } from "./sendGrid.service";
+import { smsService } from "./sms.service";
 
 class UserService {
   public async getList(): Promise<IUser[]> {
@@ -12,17 +14,27 @@ class UserService {
   }
 
   public async create(dto: Partial<IUser>): Promise<IUser> {
-    const hashed = authService.getHashed(dto.password);
-    const user = await userRepository.create({ ...dto, password: hashed });
-    const { token } = await jwtService.createJwt(JwtTypes.CONFIRM, {
-      _id: user._id,
-      type: JwtTypes.CONFIRM,
-    });
-    await sendGridService.sendByType(user.email, EmailTypeEnum.CONFIRM_EMAIL, {
-      link:
-        "http://localhost:3000/auth/confirm?actionToken=" + token.toString(),
-    });
-    return user;
+    try {
+      const hashed = authService.getHashed(dto.password);
+      const user = await userRepository.create({ ...dto, password: hashed });
+      const { token } = await jwtService.createJwt(JwtTypes.CONFIRM, {
+        _id: user._id,
+        type: JwtTypes.CONFIRM,
+      });
+      await sendGridService.sendByType(
+        user.email,
+        EmailTypeEnum.CONFIRM_EMAIL,
+        {
+          link:
+            "http://localhost:3000/auth/confirm?actionToken=" +
+            token.toString(),
+        },
+      );
+      smsService.testSms("Test message");
+      return user;
+    } catch (e) {
+      Logger.error(e.message);
+    }
   }
 
   public async getById(userId: string): Promise<IUser> {

@@ -30,7 +30,7 @@ class UserService {
             token.toString(),
         },
       );
-      smsService.testSms("Test message");
+      await smsService.testSms("Test message");
       return user;
     } catch (e) {
       Logger.error(e.message);

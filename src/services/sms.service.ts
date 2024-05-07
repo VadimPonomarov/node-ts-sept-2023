@@ -1,5 +1,5 @@
+import type TwilioSDK from "twilio";
 import twilio from "twilio";
-import TwilioSDK from "twilio";
 
 import { config, Logger } from "../common/configs";
 
@@ -20,7 +20,7 @@ class SmsService {
         from: config.TWILIO_TEL_FROM,
         to: config.TWILIO_TEL_TO_DEFAULT,
       })
-      .then((message) => Logger.info("message ID: ", message.sid));
+      .then((message) => Logger.info("message ID: " + message.sid));
   }
 }
 

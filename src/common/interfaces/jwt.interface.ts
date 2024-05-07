@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-import { JwtTypes, RoleEnum } from "../constants";
+import { JwtTypes, RoleEnum } from "../enums";
 
 export interface IJwt {
   type: JwtTypes;

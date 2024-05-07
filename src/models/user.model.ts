@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
-import { RoleEnum } from "../common/constants";
-import { IUser } from "../common/interfaces/user.interface";
+import { RoleEnum } from "../common/enums";
+import { IUser } from "../common/interfaces";
 
 const userSchema = new mongoose.Schema(
   {

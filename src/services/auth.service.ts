@@ -1,11 +1,9 @@
 import { compareSync, hashSync } from "bcryptjs";
 
 import { Logger } from "../common/configs";
-import { ApiError } from "../common/errors/api.error";
-import { ILoginDto } from "../common/interfaces/auth.interface";
-import { IJwtPayload, JwtPairType } from "../common/interfaces/jwt.interface";
-import { tokenRepository } from "../repositories/token.repository";
-import { userRepository } from "../repositories/user.repository";
+import { ApiError } from "../common/errors";
+import { IJwtPayload, ILoginDto, JwtPairType } from "../common/interfaces";
+import { tokenRepository, userRepository } from "../repositories";
 import { jwtService } from "./jwt.service";
 import { userService } from "./user.service";
 

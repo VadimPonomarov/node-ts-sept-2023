@@ -1,6 +1,6 @@
 import mongoose, { Types } from "mongoose";
 
-import { IJwt } from "../common/interfaces/jwt.interface";
+import { IJwt } from "../common/interfaces";
 import { User } from "./user.model";
 
 const tokenSchema = new mongoose.Schema(

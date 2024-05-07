@@ -1,4 +1,4 @@
-import { EmailTypeEnum, JwtTypes } from "../common/constants";
+import { EmailTypeEnum, JwtTypes } from "../common/enums";
 import { ApiError } from "../common/errors/api.error";
 import { IUser } from "../common/interfaces/user.interface";
 import { userRepository } from "../repositories/user.repository";

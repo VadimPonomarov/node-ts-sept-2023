@@ -1,7 +1,7 @@
 import joi from "joi";
 
 import { regexConstant } from "../common/constants";
-import { IUser } from "../common/interfaces/user.interface";
+import { IUser } from "../common/interfaces";
 
 const userValidator = (data: Partial<IUser>) => {
   const schema = joi.object<Partial<IUser>>().keys({

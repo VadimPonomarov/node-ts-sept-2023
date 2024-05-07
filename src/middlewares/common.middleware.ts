@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { isObjectIdOrHexString } from "mongoose";
 
-import { ApiError } from "../common/errors/api.error";
-import { userValidator } from "../validations/user.validator";
+import { ApiError } from "../common/errors";
+import { userValidator } from "../validations";
 
 class CommonMiddleware {
   public isIdValid(req: Request, res: Response, next: NextFunction) {

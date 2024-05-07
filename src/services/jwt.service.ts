@@ -2,15 +2,10 @@ import * as jwt from "jsonwebtoken";
 import { JwtPayload } from "jsonwebtoken";
 import { Types } from "mongoose";
 
-import { config, Logger } from "../common/configs";
-import { jwtAccessConfig } from "../common/configs/jwt";
-import { JwtTypes } from "../common/constants";
-import {
-  IJwt,
-  IJwtPayload,
-  JwtPairType,
-} from "../common/interfaces/jwt.interface";
-import { tokenRepository } from "../repositories/token.repository";
+import { config, jwtAccessConfig, Logger } from "../common/configs";
+import { JwtTypes } from "../common/enums";
+import { IJwt, IJwtPayload, JwtPairType } from "../common/interfaces";
+import { tokenRepository } from "../repositories";
 
 export class JwtService {
   public async createJwt(type: JwtTypes, payload: IJwtPayload): Promise<IJwt> {

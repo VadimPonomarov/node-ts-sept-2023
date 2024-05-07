@@ -1,5 +1,5 @@
-import { IToken } from "../common/interfaces/jwt.interface";
-import { Token } from "../models/token.model";
+import { IToken } from "../common/interfaces";
+import { Token } from "../models";
 
 class TokenRepository {
   public async create(dto: IToken): Promise<IToken> {

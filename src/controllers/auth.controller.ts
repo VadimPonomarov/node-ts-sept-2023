@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
-import { ApiError } from "../common/errors/api.error";
-import { authService } from "../services/auth.service";
+import { ApiError } from "../common/errors";
+import { authService } from "../services";
 
 export class AuthController {
   public async login(

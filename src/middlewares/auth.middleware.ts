@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 
-import { ApiError } from "../common/errors/api.error";
-import { IJwtPayload } from "../common/interfaces/jwt.interface";
-import { tokenRepository } from "../repositories/token.repository";
-import { jwtService } from "../services/jwt.service";
+import { ApiError } from "../common/errors";
+import { IJwtPayload } from "../common/interfaces";
+import { tokenRepository } from "../repositories";
+import { jwtService } from "../services";
 
 class AuthMiddleware {
   public async isAuth(req: Request, res: Response, next: NextFunction) {

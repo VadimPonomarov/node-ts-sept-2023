@@ -3,4 +3,5 @@ export type EmailCombinedPayloadType = {
   frontUrl?: string;
   actionToken?: string;
   link?: string;
+  hash?: string;
 };

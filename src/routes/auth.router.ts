@@ -6,7 +6,7 @@ import { commonMiddleware } from "../middlewares";
 const router = Router();
 
 router.post("/login", commonMiddleware.isUserDtoValid, authController.login);
-router.post("/refresh", authController.refresh);
-router.get("/confirm", authController.confirm);
+router.post("/refresh", authController.refreshJwtPair);
+router.get("/confirm", authController.confirmEmail);
 
 export const authRouter = router;

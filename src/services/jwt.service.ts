@@ -2,25 +2,42 @@ import * as jwt from "jsonwebtoken";
 import { JwtPayload } from "jsonwebtoken";
 import { Types } from "mongoose";
 
-import { config, jwtAccessConfig, Logger } from "../common/configs";
+import { config, JwtConfig, Logger } from "../common/configs";
 import { JwtTypes } from "../common/enums";
 import { IJwt, IJwtPayload, JwtPairType } from "../common/interfaces";
 import { tokenRepository } from "../repositories";
 
 export class JwtService {
   public async createJwt(type: JwtTypes, payload: IJwtPayload): Promise<IJwt> {
-    const token = await jwt.sign(payload, config.JWT_SECRET, jwtAccessConfig);
-    const data = {
-      type,
-      token,
-      _userId: new Types.ObjectId(payload._id),
-    };
-    return await tokenRepository.create(data);
+    try {
+      const token = jwt.sign(
+        payload,
+        config.JWT_SECRET,
+        Object(JwtConfig)[type],
+      );
+      const data = {
+        type,
+        token,
+        _userId: new Types.ObjectId(payload._id),
+      } as IJwt;
+      return await this.registerJwt(data);
+    } catch (e) {
+      Logger.error(e);
+      throw e;
+    }
+  }
+
+  public async registerJwt(data: IJwt): Promise<IJwt> {
+    try {
+      return await tokenRepository.create(data);
+    } catch (e) {
+      Logger.error(e);
+      throw e;
+    }
   }
 
   public async getJwtPair(jwtPayload: IJwtPayload): Promise<JwtPairType> {
     try {
-      await tokenRepository.deleteAllByUserId(jwtPayload._id);
       const access = await this.createJwt(JwtTypes.ACCESS, {
         ...jwtPayload,
         type: JwtTypes.ACCESS,

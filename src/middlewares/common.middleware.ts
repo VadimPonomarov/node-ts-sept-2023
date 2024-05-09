@@ -8,7 +8,7 @@ class CommonMiddleware {
   public isIdValid(req: Request, res: Response, next: NextFunction) {
     try {
       const id = req.params.userId;
-      if (!isObjectIdOrHexString(id)) {
+      if (id && !isObjectIdOrHexString(id)) {
         throw new ApiError("Invalid id", 400);
       }
       next();

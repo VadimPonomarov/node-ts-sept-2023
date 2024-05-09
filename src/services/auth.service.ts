@@ -1,6 +1,7 @@
-import { compareSync, hashSync } from "bcryptjs";
+import { compareSync } from "bcryptjs";
 
 import { Logger } from "../common/configs";
+import { JwtTypes } from "../common/enums";
 import { ApiError } from "../common/errors";
 import { IJwtPayload, ILoginDto, JwtPairType } from "../common/interfaces";
 import { tokenRepository, userRepository } from "../repositories";
@@ -8,39 +9,29 @@ import { jwtService } from "./jwt.service";
 import { userService } from "./user.service";
 
 class AuthService {
-  public getHashed(data: string): string {
-    return hashSync(data, 10);
-  }
-
   public async logIn(credentials: ILoginDto): Promise<JwtPairType> {
     try {
-      const user = await userRepository.getByEmail(credentials.email);
-      if (!user.isVerified) throw new ApiError("Not verified yet", 401);
-      if (!user.password || !compareSync(credentials.password, user.password))
+      const { _id, role, isVerified, password } =
+        await userRepository.getByEmail(credentials.email);
+      if (!isVerified) throw new ApiError("Not verified yet", 401);
+      if (!password || !compareSync(credentials.password, password))
         throw new ApiError("Failure!!! Wrong credentials", 401);
-      const jwtPayload: Partial<IJwtPayload> = {
-        _id: user._id,
-        role: user.role,
-      };
-      return await jwtService.getJwtPair(jwtPayload);
+      return await jwtService.getJwtPair({ _id, role });
     } catch (e) {
       Logger.error(e.stack);
       throw e;
     }
   }
 
-  public async refresh(refreshToken: string): Promise<JwtPairType> {
+  public async refresh(token: string): Promise<JwtPairType> {
     try {
-      const payload = (await jwtService.isJwtValid(
-        refreshToken,
+      const { _id, role, type } = (await jwtService.isJwtValid(
+        token,
       )) as IJwtPayload;
-      const isRegistered = await tokenRepository.getOne(refreshToken);
-      if (payload.type !== "refresh" || !isRegistered)
+      const isRegistered = await tokenRepository.getOne(token);
+      if (type !== JwtTypes.REFRESH || !isRegistered)
         throw new ApiError("Wrong jwt", 401);
-      return await jwtService.getJwtPair({
-        _id: payload._id,
-        role: payload.role,
-      });
+      return await jwtService.getJwtPair({ _id, role });
     } catch (e) {
       Logger.error(e.stack);
     }

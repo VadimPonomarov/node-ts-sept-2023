@@ -13,6 +13,7 @@ export interface IJwtPayload {
   _id?: string;
   type?: JwtTypes;
   role?: RoleEnum;
+  hash?: string;
 }
 
 export interface IToken extends IJwt {

@@ -7,7 +7,7 @@ export type EmailTypeToPayloadType = {
 
   [EmailTypeEnum.RESET_PASSWORD]: PickRequired<
     EmailCombinedPayloadType,
-    "frontUrl" | "actionToken"
+    "link"
   >;
 
   [EmailTypeEnum.DELETE_ACCOUNT]: PickRequired<

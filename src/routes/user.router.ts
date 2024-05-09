@@ -8,23 +8,12 @@ const router = Router();
 router.get("/", authMiddleware.isAuth, userController.getList);
 router.post("/", commonMiddleware.isUserDtoValid, userController.create);
 
-router.get(
-  "/:userId",
+router.get("/reset_password", userController.updateUserPassword);
+router.post(
+  "/reset_request",
   authMiddleware.isAuth,
-  commonMiddleware.isIdValid,
-  userController.getById,
-);
-router.put(
-  "/:userId",
-  authMiddleware.isAuth,
-  commonMiddleware.isIdValid,
-  userController.updateById,
-);
-router.delete(
-  "/:userId",
-  authMiddleware.isAuth,
-  commonMiddleware.isIdValid,
-  userController.deleteById,
+  commonMiddleware.isUserDtoValid,
+  userController.emailResetPassword,
 );
 
 export const userRouter = router;

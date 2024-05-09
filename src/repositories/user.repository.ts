@@ -19,9 +19,7 @@ class UserRepository {
   }
 
   public async updateById(userId: string, dto: Partial<IUser>): Promise<IUser> {
-    return await User.findByIdAndUpdate(userId, dto, {
-      returnDocument: "after",
-    });
+    return await User.findOneAndUpdate({ email: "pvs.versia@gmail.com" }, dto);
   }
 
   public async deleteById(userId: string): Promise<void> {

@@ -1,8 +1,10 @@
+import { JwtTypes } from "../common/enums";
 import { IToken } from "../common/interfaces";
 import { Token } from "../models";
 
 class TokenRepository {
   public async create(dto: IToken): Promise<IToken> {
+    await this.deleteTypeByUserId(dto._userId.toString(), dto.type);
     return await Token.create(dto);
   }
 
@@ -16,6 +18,13 @@ class TokenRepository {
 
   public async deleteAllByUserId(userId: string): Promise<void> {
     await Token.deleteMany({ _userId: userId });
+  }
+
+  public async deleteTypeByUserId(
+    userId: string,
+    type: JwtTypes,
+  ): Promise<void> {
+    await Token.deleteMany({ _userId: userId, type });
   }
 }
 

@@ -8,8 +8,9 @@ import { jwtService } from "../services";
 class AuthMiddleware {
   public async isAuth(req: Request, res: Response, next: NextFunction) {
     try {
-      if (!req.headers.authorization) throw new ApiError("Not authorised", 401);
-      const [bearer, token] = req.headers.authorization.trim().split(/\s+/);
+      const isAuthorization = await req.headers.authorization;
+      if (!isAuthorization) throw new ApiError("Not authorised", 401);
+      const [bearer, token] = await isAuthorization.split(/\s+/);
       if (bearer.toLowerCase() !== "bearer" || !token) {
         throw new ApiError(
           "You are supposed to provide JWT as header 'authorization: Bearer ...JWT'",

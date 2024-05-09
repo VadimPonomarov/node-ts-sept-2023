@@ -4,9 +4,8 @@ import morgan from "morgan";
 
 import { config, Logger } from "./common/configs";
 import { morganOptions as options } from "./common/configs/morgan";
-import { ApiError } from "./common/errors/api.error";
-import { authRouter } from "./routes/auth.router";
-import { userRouter } from "./routes/user.router";
+import { ApiError } from "./common/errors";
+import { authRouter, userRouter } from "./routes";
 
 const app = express();
 app.use(express.json());

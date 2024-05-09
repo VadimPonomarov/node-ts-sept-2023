@@ -14,6 +14,6 @@ const config = {
 };
 
 export { config };
-export * from "./jwt";
+export * from "./jwtConfig";
 export * from "./morgan";
 export * from "./logger";

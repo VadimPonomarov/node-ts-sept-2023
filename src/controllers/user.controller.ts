@@ -2,8 +2,6 @@ import { NextFunction, Request, Response } from "express";
 
 import { Logger } from "../common/configs";
 import { statusCodes } from "../common/constants";
-import { JwtTypes } from "../common/enums";
-import { ApiError } from "../common/errors";
 import { IJwtPayload, IResetPasswordDto, IUser } from "../common/interfaces";
 import { jwtService, userService } from "../services";
 
@@ -40,16 +38,10 @@ class UserController {
         bearerToken,
       )) as IJwtPayload;
       const resetPasswordDto = req.body as IResetPasswordDto;
-      if (!resetPasswordDto)
-        throw new ApiError(
-          "Reset password data should be provided",
-          statusCodes.BAD_REQUEST,
-        );
+
       await userService.forgetPasswordEmailRequest(userId, resetPasswordDto);
       res
-        .json({
-          message: "!!! Email for confirmation was sent on User's address",
-        })
+        .send("!!! Email for confirmation was sent on User's address")
         .status(statusCodes.OK);
     } catch (e) {
       Logger.error(e.message);
@@ -64,21 +56,8 @@ class UserController {
   ) {
     try {
       const token = req.query["actionToken"] as string;
-      const { type } = (await jwtService.isJwtValid(token)) as IJwtPayload;
-      if (type !== JwtTypes.FORGET_PASSWORD)
-        throw new ApiError("Wrong jwt type", statusCodes.BAD_REQUEST);
-      const user = await userService.updateUserPassword(token);
-      if (!user)
-        res
-          .json({
-            message: "!!! Failure",
-          })
-          .status(statusCodes.BAD_REQUEST);
-      res
-        .json({
-          message: "!!! Success",
-        })
-        .status(statusCodes.OK);
+      await userService.updateUserPassword(token);
+      res.status(statusCodes.OK).send("Done");
     } catch (e) {
       Logger.error(e);
       next(e);

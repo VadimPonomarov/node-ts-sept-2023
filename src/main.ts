@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from "express";
+import express, { Request, Response } from "express";
 import mongoose from "mongoose";
 import morgan from "morgan";
 
@@ -15,15 +15,12 @@ app.use(morgan("combined", options));
 app.use("/users", userRouter);
 app.use("/auth", authRouter);
 
-app.use(
-  "*",
-  (err: ApiError, req: Request, res: Response, next: NextFunction) => {
-    Logger.error(err.stack);
-    return res
-      .status(err.status || 500)
-      .json(err.message || "Something went wrong!");
-  },
-);
+app.use("*", (err: ApiError, req: Request, res: Response) => {
+  Logger.error(err.stack);
+  return res
+    .status(err.status || 500)
+    .json(err.message || "Something went wrong!");
+});
 
 process.on("uncaughtException", (error) => {
   Logger.error("uncaughtException: ", error);

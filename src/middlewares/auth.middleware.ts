@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
+import { JwtTypes } from "../common/enums";
 import { ApiError } from "../common/errors";
 import { IJwtPayload } from "../common/interfaces";
 import { tokenRepository } from "../repositories";
@@ -19,8 +20,10 @@ class AuthMiddleware {
       }
       const isRegistered = await tokenRepository.getOne(token);
       if (!isRegistered) throw new ApiError("Token is not registered yet", 401);
-      const { type }: Partial<IJwtPayload> = jwtService.isJwtValid(token);
-      if (type !== "access") throw new ApiError("Wrong JWT type", 401);
+      const payload = jwtService.isJwtValid(token) as IJwtPayload;
+      if (payload.type !== JwtTypes.ACCESS)
+        throw new ApiError("Wrong JWT type", 401);
+      req["userId"] = payload._id;
       next();
     } catch (e) {
       next(e);

@@ -2,8 +2,8 @@ import { NextFunction, Request, Response } from "express";
 
 import { Logger } from "../common/configs";
 import { statusCodes } from "../common/constants";
-import { IJwtPayload, IResetPasswordDto, IUser } from "../common/interfaces";
-import { jwtService, userService } from "../services";
+import { IResetPasswordDto, IUser } from "../common/interfaces";
+import { userService } from "../services";
 
 class UserController {
   public async create(req: Request, res: Response, next: NextFunction) {
@@ -31,15 +31,12 @@ class UserController {
     next: NextFunction,
   ): Promise<void> {
     try {
-      const bearerToken: string = req.headers.authorization
-        .trim()
-        .split(/\s+/)[1];
-      const { _id: userId } = (await jwtService.isJwtValid(
-        bearerToken,
-      )) as IJwtPayload;
       const resetPasswordDto = req.body as IResetPasswordDto;
 
-      await userService.forgetPasswordEmailRequest(userId, resetPasswordDto);
+      await userService.forgetPasswordEmailRequest(
+        req["userId"],
+        resetPasswordDto,
+      );
       res
         .send("!!! Email for confirmation was sent on User's address")
         .status(statusCodes.OK);

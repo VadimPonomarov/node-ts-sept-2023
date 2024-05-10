@@ -1,5 +1,4 @@
 import { Logger } from "../common/configs";
-import { statusCodes } from "../common/constants";
 import { EmailTypeEnum, JwtTypes } from "../common/enums";
 import { ApiError } from "../common/errors";
 import { createLinkHelper, getHashedHelper } from "../common/helpers";
@@ -60,11 +59,6 @@ class UserService {
     dto: IResetPasswordDto,
   ): Promise<void> {
     try {
-      if (!dto)
-        throw new ApiError(
-          "Reset password data should be provided",
-          statusCodes.BAD_REQUEST,
-        );
       const hash = getHashedHelper(dto.password);
       const payload: IJwtPayload = {
         _id: userId,

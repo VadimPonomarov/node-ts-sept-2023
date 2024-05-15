@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
+import { Logger } from "../common/configs";
 import { JwtTypes } from "../common/enums";
 import { ApiError } from "../common/errors";
 import { IJwtPayload } from "../common/interfaces";
@@ -26,7 +27,8 @@ class AuthMiddleware {
       req["userId"] = payload._id;
       next();
     } catch (e) {
-      next(e);
+      Logger.error(e);
+      next(e.message);
     }
   }
 }

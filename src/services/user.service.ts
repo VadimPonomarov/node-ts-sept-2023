@@ -1,10 +1,13 @@
+import { UploadedFile } from "express-fileupload";
+
 import { Logger } from "../common/configs";
-import { EmailTypeEnum, JwtTypes } from "../common/enums";
+import { EmailTypeEnum, FileItemTypeEnum, JwtTypes } from "../common/enums";
 import { ApiError } from "../common/errors";
 import { createLinkHelper, getHashedHelper } from "../common/helpers";
 import { IJwtPayload, IResetPasswordDto, IUser } from "../common/interfaces";
 import { userRepository } from "../repositories";
 import { jwtService } from "./jwt.service";
+import { s3Service } from "./s3s.service";
 import { sendGridService } from "./sendGrid.service";
 import { smsService } from "./sms.service";
 
@@ -38,20 +41,20 @@ class UserService {
     }
   }
 
-  public async getByEmail(userEmail: string): Promise<IUser> {
-    const user = await userRepository.getById(userEmail);
-    if (!user) {
-      throw new ApiError("user not found", 404);
-    }
-    return user;
+  public async getById(userId: string): Promise<IUser> {
+    return await userRepository.getById(userId);
   }
 
-  public async updateById(userId: any, dto: Partial<IUser>): Promise<IUser> {
-    const user = await userRepository.getById(userId);
-    if (!user) {
-      throw new ApiError("user not found", 404);
-    }
+  public async getByEmail(userEmail: string): Promise<IUser> {
+    return await userRepository.getByEmail(userEmail);
+  }
+
+  public async updateById(userId: string, dto: Partial<IUser>): Promise<IUser> {
     return await userRepository.updateById(userId, dto);
+  }
+
+  public async deleteById(userId: any): Promise<void> {
+    return await userRepository.deleteById(userId);
   }
 
   public async forgetPasswordEmailRequest(
@@ -78,7 +81,7 @@ class UserService {
         link,
       });
     } catch (e) {
-      Logger.error(e.stack);
+      throw e;
     }
   }
 
@@ -91,9 +94,24 @@ class UserService {
         throw new ApiError("Wrong jwt", 401);
       return await userService.updateById(_id, { password: hash });
     } catch (e) {
-      Logger.error(e.stack);
       throw e;
     }
+  }
+
+  public async uploadAvatar(
+    userId: string,
+    avatar: UploadedFile,
+  ): Promise<IUser> {
+    const user = await this.getById(userId);
+    const filePath = await s3Service.uploadFile(
+      avatar,
+      FileItemTypeEnum.USER,
+      userId,
+    );
+    if (user.avatar) {
+      await s3Service.deleteFile(user.avatar);
+    }
+    return await userRepository.updateById(userId, { avatar: filePath });
   }
 }
 

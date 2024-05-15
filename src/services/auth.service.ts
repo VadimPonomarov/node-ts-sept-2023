@@ -4,15 +4,17 @@ import { Logger } from "../common/configs";
 import { JwtTypes } from "../common/enums";
 import { ApiError } from "../common/errors";
 import { IJwtPayload, ILoginDto, JwtPairType } from "../common/interfaces";
-import { tokenRepository, userRepository } from "../repositories";
+import { User } from "../models";
+import { tokenRepository } from "../repositories";
 import { jwtService } from "./jwt.service";
 import { userService } from "./user.service";
 
 class AuthService {
   public async logIn(credentials: ILoginDto): Promise<JwtPairType> {
     try {
-      const { _id, role, isVerified, password } =
-        await userRepository.getByEmail(credentials.email);
+      const { _id, role, isVerified, password } = await User.findOne({
+        email: credentials.email,
+      });
       if (!isVerified) throw new ApiError("Not verified yet", 401);
       if (!password || !compareSync(credentials.password, password))
         throw new ApiError("Failure!!! Wrong credentials", 401);
